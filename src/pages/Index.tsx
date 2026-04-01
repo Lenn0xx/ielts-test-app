@@ -195,26 +195,13 @@ export default function Index() {
     document.body.style.userSelect = 'none';
   };
 
-  // Get current page ranges for both reading material and questions
-  const getCurrentRanges = () => {
-    if (!segments) {
-      return {
-        material: { start: 1, end: 1 },
-        questions: { start: 1, end: 1 },
-      };
-    }
-
+  // Get current page range
+  const getCurrentRange = () => {
+    if (!segments) return { start: 1, end: 1 };
     const key = `p${currentPassage}` as keyof ExamSegments;
-
     return {
-      material: {
-        start: segments[key].material[0],
-        end: segments[key].material[1],
-      },
-      questions: {
-        start: segments[key].questions[0],
-        end: segments[key].questions[1],
-      },
+      start: segments[key][currentView][0],
+      end: segments[key][currentView][1],
     };
   };
 
@@ -234,7 +221,7 @@ export default function Index() {
     );
   }
 
-  const ranges = getCurrentRanges();
+  const range = getCurrentRange();
 
   return (
     <div className="h-screen flex flex-col overflow-hidden bg-muted">
@@ -278,37 +265,14 @@ export default function Index() {
 
           {/* PDF Viewer */}
           {pdfFile && (
-            <div className="relative flex-1 overflow-hidden">
-              <div
-                className={currentView === 'material'
-                  ? 'absolute inset-0'
-                  : 'absolute inset-0 invisible pointer-events-none'}
-              >
-                <PDFViewer
-                  file={pdfFile}
-                  startPage={ranges.material.start}
-                  endPage={ranges.material.end}
-                  scrollKey={`pdf-p${currentPassage}-material`}
-                  onScrollChange={saveScrollPosition}
-                  getScrollPosition={getScrollPosition}
-                />
-              </div>
-
-              <div
-                className={currentView === 'questions'
-                  ? 'absolute inset-0'
-                  : 'absolute inset-0 invisible pointer-events-none'}
-              >
-                <PDFViewer
-                  file={pdfFile}
-                  startPage={ranges.questions.start}
-                  endPage={ranges.questions.end}
-                  scrollKey={`pdf-p${currentPassage}-questions`}
-                  onScrollChange={saveScrollPosition}
-                  getScrollPosition={getScrollPosition}
-                />
-              </div>
-            </div>
+            <PDFViewer
+              file={pdfFile}
+              startPage={range.start}
+              endPage={range.end}
+              scrollKey={`pdf-p${currentPassage}-${currentView}`}
+              onScrollChange={saveScrollPosition}
+              getScrollPosition={getScrollPosition}
+            />
           )}
         </div>
 
