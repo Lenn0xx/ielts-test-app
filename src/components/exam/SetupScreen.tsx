@@ -155,7 +155,7 @@ export function SetupScreen({ onLaunch }: SetupScreenProps) {
                     type="number"
                     min={1}
                     value={segments[p].questions[0]}
-                    onChange={e => updateSegment(p, 'questions', 0, parseInt(e.target.value) || 1)}
+                    onChange={e => updateSegment(p, 'questions', 0, e.target.value === '' ? '' : (parseInt(e.target.value) || 1))}
                     className="w-16 px-2 py-1.5 border border-border rounded text-sm text-center bg-background"
                   />
                   <span className="text-muted-foreground">–</span>
