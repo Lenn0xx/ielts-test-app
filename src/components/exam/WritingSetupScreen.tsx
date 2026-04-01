@@ -12,9 +12,9 @@ interface WritingSetupScreenProps {
 export function WritingSetupScreen({ onLaunch }: WritingSetupScreenProps) {
   const { user, signOut } = useAuth();
   const [file, setFile] = useState<File | null>(null);
-  const [tasks, setTasks] = useState<WritingTask[]>([
-    { id: 1, pages: [1, 1] },
-    { id: 2, pages: [2, 2] },
+  const [tasks, setTasks] = useState([
+    { id: 1 as const, pages: ['' as any, '' as any] as [number | '', number | ''] },
+    { id: 2 as const, pages: ['' as any, '' as any] as [number | '', number | ''] },
   ]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,7 +23,7 @@ export function WritingSetupScreen({ onLaunch }: WritingSetupScreenProps) {
     }
   };
 
-  const updateTaskPages = (taskId: 1 | 2, index: 0 | 1, value: number) => {
+  const updateTaskPages = (taskId: 1 | 2, index: 0 | 1, value: number | '') => {
     setTasks(prev =>
       prev.map(task =>
         task.id === taskId
@@ -32,7 +32,7 @@ export function WritingSetupScreen({ onLaunch }: WritingSetupScreenProps) {
               pages: [
                 index === 0 ? value : task.pages[0],
                 index === 1 ? value : task.pages[1],
-              ] as [number, number],
+              ] as [number | '', number | ''],
             }
           : task
       )
@@ -44,7 +44,12 @@ export function WritingSetupScreen({ onLaunch }: WritingSetupScreenProps) {
       alert('Please upload a PDF file with the writing tasks.');
       return;
     }
-    onLaunch(file, tasks);
+    const allFilled = tasks.every(t => t.pages.every(v => v !== ''));
+    if (!allFilled) {
+      alert('Please fill in all page ranges.');
+      return;
+    }
+    onLaunch(file, tasks as WritingTask[]);
   };
 
   return (
@@ -134,7 +139,7 @@ export function WritingSetupScreen({ onLaunch }: WritingSetupScreenProps) {
                     min={1}
                     value={task.pages[0]}
                     onChange={e =>
-                      updateTaskPages(task.id, 0, parseInt(e.target.value) || 1)
+                      updateTaskPages(task.id, 0, e.target.value === '' ? '' : (parseInt(e.target.value) || 1))
                     }
                     className="w-16 px-2 py-1.5 border border-border rounded text-sm text-center bg-background"
                   />
@@ -144,7 +149,7 @@ export function WritingSetupScreen({ onLaunch }: WritingSetupScreenProps) {
                     min={1}
                     value={task.pages[1]}
                     onChange={e =>
-                      updateTaskPages(task.id, 1, parseInt(e.target.value) || 1)
+                      updateTaskPages(task.id, 1, e.target.value === '' ? '' : (parseInt(e.target.value) || 1))
                     }
                     className="w-16 px-2 py-1.5 border border-border rounded text-sm text-center bg-background"
                   />

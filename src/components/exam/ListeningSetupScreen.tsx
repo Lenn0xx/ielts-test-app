@@ -13,11 +13,11 @@ export function ListeningSetupScreen({ onLaunch }: ListeningSetupScreenProps) {
   const { user, signOut } = useAuth();
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
-  const [sections, setSections] = useState<ListeningSection[]>([
-    { id: 1, startTime: 0, endTime: 600, questionRange: [1, 10], questionPages: [1, 1] },
-    { id: 2, startTime: 600, endTime: 1200, questionRange: [11, 20], questionPages: [2, 2] },
-    { id: 3, startTime: 1200, endTime: 1800, questionRange: [21, 30], questionPages: [3, 3] },
-    { id: 4, startTime: 1800, endTime: 2400, questionRange: [31, 40], questionPages: [4, 4] },
+  const [sections, setSections] = useState([
+    { id: 1, startTime: '' as any, endTime: '' as any, questionRange: ['' as any, '' as any] as [number | '', number | ''], questionPages: ['' as any, '' as any] as [number | '', number | ''] },
+    { id: 2, startTime: '' as any, endTime: '' as any, questionRange: ['' as any, '' as any] as [number | '', number | ''], questionPages: ['' as any, '' as any] as [number | '', number | ''] },
+    { id: 3, startTime: '' as any, endTime: '' as any, questionRange: ['' as any, '' as any] as [number | '', number | ''], questionPages: ['' as any, '' as any] as [number | '', number | ''] },
+    { id: 4, startTime: '' as any, endTime: '' as any, questionRange: ['' as any, '' as any] as [number | '', number | ''], questionPages: ['' as any, '' as any] as [number | '', number | ''] },
   ]);
 
   const handleAudioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,7 +35,7 @@ export function ListeningSetupScreen({ onLaunch }: ListeningSetupScreenProps) {
   const updateSectionTime = (
     index: number,
     field: 'startTime' | 'endTime',
-    value: number
+    value: number | ''
   ) => {
     setSections(prev => {
       const updated = [...prev];
@@ -47,7 +47,7 @@ export function ListeningSetupScreen({ onLaunch }: ListeningSetupScreenProps) {
   const updateSectionPages = (
     index: number,
     pageIndex: 0 | 1,
-    value: number
+    value: number | ''
   ) => {
     setSections(prev => {
       const updated = [...prev];
@@ -56,7 +56,7 @@ export function ListeningSetupScreen({ onLaunch }: ListeningSetupScreenProps) {
         questionPages: [
           pageIndex === 0 ? value : updated[index].questionPages[0],
           pageIndex === 1 ? value : updated[index].questionPages[1],
-        ] as [number, number],
+        ] as [number | '', number | ''],
       };
       return updated;
     });
@@ -78,7 +78,14 @@ export function ListeningSetupScreen({ onLaunch }: ListeningSetupScreenProps) {
       alert('Please upload a questions PDF file.');
       return;
     }
-    onLaunch(audioFile, pdfFile, sections);
+    const allFilled = sections.every(s =>
+      s.questionPages.every(v => v !== '') && s.questionRange.every(v => v !== '')
+    );
+    if (!allFilled) {
+      alert('Please fill in all page ranges and question ranges.');
+      return;
+    }
+    onLaunch(audioFile, pdfFile, sections as ListeningSection[]);
   };
 
   return (
@@ -184,27 +191,27 @@ export function ListeningSetupScreen({ onLaunch }: ListeningSetupScreenProps) {
                 <div className="font-semibold text-foreground">Section {section.id}</div>
                 <input
                   type="text"
-                  value={formatTime(section.startTime)}
-                  onChange={e => updateSectionTime(idx, 'startTime', parseTime(e.target.value))}
+                  value={section.startTime === '' ? '' : formatTime(section.startTime)}
+                  onChange={e => updateSectionTime(idx, 'startTime', e.target.value === '' ? '' : parseTime(e.target.value))}
                   placeholder="0:00"
                   className="px-2 py-1.5 border border-border rounded text-sm text-center bg-background"
                 />
                 <input
                   type="text"
-                  value={formatTime(section.endTime)}
-                  onChange={e => updateSectionTime(idx, 'endTime', parseTime(e.target.value))}
+                  value={section.endTime === '' ? '' : formatTime(section.endTime)}
+                  onChange={e => updateSectionTime(idx, 'endTime', e.target.value === '' ? '' : parseTime(e.target.value))}
                   placeholder="10:00"
                   className="px-2 py-1.5 border border-border rounded text-sm text-center bg-background"
                 />
                 <div className="text-sm text-muted-foreground text-center">
-                  Q{section.questionRange[0]}-{section.questionRange[1]}
+                  Q{section.questionRange[0] === '' ? '?' : section.questionRange[0]}-{section.questionRange[1] === '' ? '?' : section.questionRange[1]}
                 </div>
                 <div className="flex items-center gap-1">
                   <input
                     type="number"
                     min={1}
                     value={section.questionPages[0]}
-                    onChange={e => updateSectionPages(idx, 0, parseInt(e.target.value) || 1)}
+                    onChange={e => updateSectionPages(idx, 0, e.target.value === '' ? '' : (parseInt(e.target.value) || 1))}
                     className="w-12 px-2 py-1.5 border border-border rounded text-sm text-center bg-background"
                   />
                   <span className="text-muted-foreground">–</span>
@@ -212,7 +219,7 @@ export function ListeningSetupScreen({ onLaunch }: ListeningSetupScreenProps) {
                     type="number"
                     min={1}
                     value={section.questionPages[1]}
-                    onChange={e => updateSectionPages(idx, 1, parseInt(e.target.value) || 1)}
+                    onChange={e => updateSectionPages(idx, 1, e.target.value === '' ? '' : (parseInt(e.target.value) || 1))}
                     className="w-12 px-2 py-1.5 border border-border rounded text-sm text-center bg-background"
                   />
                 </div>

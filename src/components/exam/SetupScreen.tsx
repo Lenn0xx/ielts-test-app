@@ -12,10 +12,10 @@ interface SetupScreenProps {
 export function SetupScreen({ onLaunch }: SetupScreenProps) {
   const { user, signOut } = useAuth();
   const [file, setFile] = useState<File | null>(null);
-  const [segments, setSegments] = useState<ExamSegments>({
-    p1: { material: [1, 1], questions: [2, 2] },
-    p2: { material: [3, 3], questions: [4, 4] },
-    p3: { material: [5, 5], questions: [6, 6] },
+  const [segments, setSegments] = useState({
+    p1: { material: ['' as any, '' as any] as [number | '', number | ''], questions: ['' as any, '' as any] as [number | '', number | ''] },
+    p2: { material: ['' as any, '' as any] as [number | '', number | ''], questions: ['' as any, '' as any] as [number | '', number | ''] },
+    p3: { material: ['' as any, '' as any] as [number | '', number | ''], questions: ['' as any, '' as any] as [number | '', number | ''] },
   });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,7 +28,7 @@ export function SetupScreen({ onLaunch }: SetupScreenProps) {
     passage: 'p1' | 'p2' | 'p3',
     type: 'material' | 'questions',
     index: 0 | 1,
-    value: number
+    value: number | ''
   ) => {
     setSegments(prev => ({
       ...prev,
@@ -47,7 +47,15 @@ export function SetupScreen({ onLaunch }: SetupScreenProps) {
       alert('Please upload a PDF file.');
       return;
     }
-    onLaunch(file, segments);
+    // Validate all fields are filled
+    const allFilled = (['p1', 'p2', 'p3'] as const).every(p =>
+      segments[p].material.every(v => v !== '') && segments[p].questions.every(v => v !== '')
+    );
+    if (!allFilled) {
+      alert('Please fill in all page ranges.');
+      return;
+    }
+    onLaunch(file, segments as ExamSegments);
   };
 
   return (
@@ -129,7 +137,7 @@ export function SetupScreen({ onLaunch }: SetupScreenProps) {
                     type="number"
                     min={1}
                     value={segments[p].material[0]}
-                    onChange={e => updateSegment(p, 'material', 0, parseInt(e.target.value) || 1)}
+                    onChange={e => updateSegment(p, 'material', 0, e.target.value === '' ? '' : (parseInt(e.target.value) || 1))}
                     className="w-16 px-2 py-1.5 border border-border rounded text-sm text-center bg-background"
                   />
                   <span className="text-muted-foreground">–</span>
@@ -137,7 +145,7 @@ export function SetupScreen({ onLaunch }: SetupScreenProps) {
                     type="number"
                     min={1}
                     value={segments[p].material[1]}
-                    onChange={e => updateSegment(p, 'material', 1, parseInt(e.target.value) || 1)}
+                    onChange={e => updateSegment(p, 'material', 1, e.target.value === '' ? '' : (parseInt(e.target.value) || 1))}
                     className="w-16 px-2 py-1.5 border border-border rounded text-sm text-center bg-background"
                   />
                 </div>
@@ -146,7 +154,7 @@ export function SetupScreen({ onLaunch }: SetupScreenProps) {
                     type="number"
                     min={1}
                     value={segments[p].questions[0]}
-                    onChange={e => updateSegment(p, 'questions', 0, parseInt(e.target.value) || 1)}
+                    onChange={e => updateSegment(p, 'questions', 0, e.target.value === '' ? '' : (parseInt(e.target.value) || 1))}
                     className="w-16 px-2 py-1.5 border border-border rounded text-sm text-center bg-background"
                   />
                   <span className="text-muted-foreground">–</span>
@@ -154,7 +162,7 @@ export function SetupScreen({ onLaunch }: SetupScreenProps) {
                     type="number"
                     min={1}
                     value={segments[p].questions[1]}
-                    onChange={e => updateSegment(p, 'questions', 1, parseInt(e.target.value) || 1)}
+                    onChange={e => updateSegment(p, 'questions', 1, e.target.value === '' ? '' : (parseInt(e.target.value) || 1))}
                     className="w-16 px-2 py-1.5 border border-border rounded text-sm text-center bg-background"
                   />
                 </div>
