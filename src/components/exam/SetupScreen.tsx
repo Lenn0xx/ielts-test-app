@@ -12,10 +12,10 @@ interface SetupScreenProps {
 export function SetupScreen({ onLaunch }: SetupScreenProps) {
   const { user, signOut } = useAuth();
   const [file, setFile] = useState<File | null>(null);
-  const [segments, setSegments] = useState<ExamSegments>({
-    p1: { material: [1, 1], questions: [2, 2] },
-    p2: { material: [3, 3], questions: [4, 4] },
-    p3: { material: [5, 5], questions: [6, 6] },
+  const [segments, setSegments] = useState({
+    p1: { material: ['' as any, '' as any] as [number | '', number | ''], questions: ['' as any, '' as any] as [number | '', number | ''] },
+    p2: { material: ['' as any, '' as any] as [number | '', number | ''], questions: ['' as any, '' as any] as [number | '', number | ''] },
+    p3: { material: ['' as any, '' as any] as [number | '', number | ''], questions: ['' as any, '' as any] as [number | '', number | ''] },
   });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
