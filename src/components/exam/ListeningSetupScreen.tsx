@@ -191,27 +191,27 @@ export function ListeningSetupScreen({ onLaunch }: ListeningSetupScreenProps) {
                 <div className="font-semibold text-foreground">Section {section.id}</div>
                 <input
                   type="text"
-                  value={formatTime(section.startTime)}
-                  onChange={e => updateSectionTime(idx, 'startTime', parseTime(e.target.value))}
+                  value={section.startTime === '' ? '' : formatTime(section.startTime)}
+                  onChange={e => updateSectionTime(idx, 'startTime', e.target.value === '' ? '' : parseTime(e.target.value))}
                   placeholder="0:00"
                   className="px-2 py-1.5 border border-border rounded text-sm text-center bg-background"
                 />
                 <input
                   type="text"
-                  value={formatTime(section.endTime)}
-                  onChange={e => updateSectionTime(idx, 'endTime', parseTime(e.target.value))}
+                  value={section.endTime === '' ? '' : formatTime(section.endTime)}
+                  onChange={e => updateSectionTime(idx, 'endTime', e.target.value === '' ? '' : parseTime(e.target.value))}
                   placeholder="10:00"
                   className="px-2 py-1.5 border border-border rounded text-sm text-center bg-background"
                 />
                 <div className="text-sm text-muted-foreground text-center">
-                  Q{section.questionRange[0]}-{section.questionRange[1]}
+                  Q{section.questionRange[0] === '' ? '?' : section.questionRange[0]}-{section.questionRange[1] === '' ? '?' : section.questionRange[1]}
                 </div>
                 <div className="flex items-center gap-1">
                   <input
                     type="number"
                     min={1}
                     value={section.questionPages[0]}
-                    onChange={e => updateSectionPages(idx, 0, parseInt(e.target.value) || 1)}
+                    onChange={e => updateSectionPages(idx, 0, e.target.value === '' ? '' : (parseInt(e.target.value) || 1))}
                     className="w-12 px-2 py-1.5 border border-border rounded text-sm text-center bg-background"
                   />
                   <span className="text-muted-foreground">–</span>
@@ -219,7 +219,7 @@ export function ListeningSetupScreen({ onLaunch }: ListeningSetupScreenProps) {
                     type="number"
                     min={1}
                     value={section.questionPages[1]}
-                    onChange={e => updateSectionPages(idx, 1, parseInt(e.target.value) || 1)}
+                    onChange={e => updateSectionPages(idx, 1, e.target.value === '' ? '' : (parseInt(e.target.value) || 1))}
                     className="w-12 px-2 py-1.5 border border-border rounded text-sm text-center bg-background"
                   />
                 </div>
