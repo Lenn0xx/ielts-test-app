@@ -35,7 +35,7 @@ export function ListeningSetupScreen({ onLaunch }: ListeningSetupScreenProps) {
   const updateSectionTime = (
     index: number,
     field: 'startTime' | 'endTime',
-    value: number
+    value: number | ''
   ) => {
     setSections(prev => {
       const updated = [...prev];
