@@ -149,7 +149,7 @@ export function WritingSetupScreen({ onLaunch }: WritingSetupScreenProps) {
                     min={1}
                     value={task.pages[1]}
                     onChange={e =>
-                      updateTaskPages(task.id, 1, parseInt(e.target.value) || 1)
+                      updateTaskPages(task.id, 1, e.target.value === '' ? '' : (parseInt(e.target.value) || 1))
                     }
                     className="w-16 px-2 py-1.5 border border-border rounded text-sm text-center bg-background"
                   />
