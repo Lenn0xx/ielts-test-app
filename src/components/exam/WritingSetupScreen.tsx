@@ -12,9 +12,9 @@ interface WritingSetupScreenProps {
 export function WritingSetupScreen({ onLaunch }: WritingSetupScreenProps) {
   const { user, signOut } = useAuth();
   const [file, setFile] = useState<File | null>(null);
-  const [tasks, setTasks] = useState<WritingTask[]>([
-    { id: 1, pages: [1, 1] },
-    { id: 2, pages: [2, 2] },
+  const [tasks, setTasks] = useState([
+    { id: 1 as const, pages: ['' as any, '' as any] as [number | '', number | ''] },
+    { id: 2 as const, pages: ['' as any, '' as any] as [number | '', number | ''] },
   ]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
