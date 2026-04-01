@@ -47,7 +47,7 @@ export function ListeningSetupScreen({ onLaunch }: ListeningSetupScreenProps) {
   const updateSectionPages = (
     index: number,
     pageIndex: 0 | 1,
-    value: number
+    value: number | ''
   ) => {
     setSections(prev => {
       const updated = [...prev];
@@ -56,7 +56,7 @@ export function ListeningSetupScreen({ onLaunch }: ListeningSetupScreenProps) {
         questionPages: [
           pageIndex === 0 ? value : updated[index].questionPages[0],
           pageIndex === 1 ? value : updated[index].questionPages[1],
-        ] as [number, number],
+        ] as [number | '', number | ''],
       };
       return updated;
     });
