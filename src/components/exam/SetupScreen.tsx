@@ -48,7 +48,15 @@ export function SetupScreen({ onLaunch }: SetupScreenProps) {
       alert('Please upload a PDF file.');
       return;
     }
-    onLaunch(file, segments);
+    // Validate all fields are filled
+    const allFilled = (['p1', 'p2', 'p3'] as const).every(p =>
+      segments[p].material.every(v => v !== '') && segments[p].questions.every(v => v !== '')
+    );
+    if (!allFilled) {
+      alert('Please fill in all page ranges.');
+      return;
+    }
+    onLaunch(file, segments as ExamSegments);
   };
 
   return (
