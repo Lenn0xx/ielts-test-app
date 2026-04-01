@@ -78,7 +78,14 @@ export function ListeningSetupScreen({ onLaunch }: ListeningSetupScreenProps) {
       alert('Please upload a questions PDF file.');
       return;
     }
-    onLaunch(audioFile, pdfFile, sections);
+    const allFilled = sections.every(s =>
+      s.questionPages.every(v => v !== '') && s.questionRange.every(v => v !== '')
+    );
+    if (!allFilled) {
+      alert('Please fill in all page ranges and question ranges.');
+      return;
+    }
+    onLaunch(audioFile, pdfFile, sections as ListeningSection[]);
   };
 
   return (
