@@ -30,13 +30,14 @@ export function SetupScreen({ onLaunch }: SetupScreenProps) {
     index: 0 | 1,
     value: number
   ) => {
+    const parsed = value === '' ? '' : value;
     setSegments(prev => ({
       ...prev,
       [passage]: {
         ...prev[passage],
         [type]: [
-          index === 0 ? value : prev[passage][type][0],
-          index === 1 ? value : prev[passage][type][1],
+          index === 0 ? parsed : prev[passage][type][0],
+          index === 1 ? parsed : prev[passage][type][1],
         ],
       },
     }));
