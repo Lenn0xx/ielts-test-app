@@ -23,7 +23,7 @@ export function WritingSetupScreen({ onLaunch }: WritingSetupScreenProps) {
     }
   };
 
-  const updateTaskPages = (taskId: 1 | 2, index: 0 | 1, value: number) => {
+  const updateTaskPages = (taskId: 1 | 2, index: 0 | 1, value: number | '') => {
     setTasks(prev =>
       prev.map(task =>
         task.id === taskId
@@ -32,7 +32,7 @@ export function WritingSetupScreen({ onLaunch }: WritingSetupScreenProps) {
               pages: [
                 index === 0 ? value : task.pages[0],
                 index === 1 ? value : task.pages[1],
-              ] as [number, number],
+              ] as [number | '', number | ''],
             }
           : task
       )
