@@ -13,11 +13,11 @@ export function ListeningSetupScreen({ onLaunch }: ListeningSetupScreenProps) {
   const { user, signOut } = useAuth();
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
-  const [sections, setSections] = useState<ListeningSection[]>([
-    { id: 1, startTime: 0, endTime: 600, questionRange: [1, 10], questionPages: [1, 1] },
-    { id: 2, startTime: 600, endTime: 1200, questionRange: [11, 20], questionPages: [2, 2] },
-    { id: 3, startTime: 1200, endTime: 1800, questionRange: [21, 30], questionPages: [3, 3] },
-    { id: 4, startTime: 1800, endTime: 2400, questionRange: [31, 40], questionPages: [4, 4] },
+  const [sections, setSections] = useState([
+    { id: 1, startTime: '' as any, endTime: '' as any, questionRange: ['' as any, '' as any] as [number | '', number | ''], questionPages: ['' as any, '' as any] as [number | '', number | ''] },
+    { id: 2, startTime: '' as any, endTime: '' as any, questionRange: ['' as any, '' as any] as [number | '', number | ''], questionPages: ['' as any, '' as any] as [number | '', number | ''] },
+    { id: 3, startTime: '' as any, endTime: '' as any, questionRange: ['' as any, '' as any] as [number | '', number | ''], questionPages: ['' as any, '' as any] as [number | '', number | ''] },
+    { id: 4, startTime: '' as any, endTime: '' as any, questionRange: ['' as any, '' as any] as [number | '', number | ''], questionPages: ['' as any, '' as any] as [number | '', number | ''] },
   ]);
 
   const handleAudioChange = (e: React.ChangeEvent<HTMLInputElement>) => {

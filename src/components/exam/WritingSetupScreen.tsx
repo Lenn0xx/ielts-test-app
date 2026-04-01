@@ -44,7 +44,12 @@ export function WritingSetupScreen({ onLaunch }: WritingSetupScreenProps) {
       alert('Please upload a PDF file with the writing tasks.');
       return;
     }
-    onLaunch(file, tasks);
+    const allFilled = tasks.every(t => t.pages.every(v => v !== ''));
+    if (!allFilled) {
+      alert('Please fill in all page ranges.');
+      return;
+    }
+    onLaunch(file, tasks as WritingTask[]);
   };
 
   return (
