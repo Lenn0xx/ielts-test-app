@@ -229,7 +229,7 @@ export default function Index() {
       <div className="flex-1 flex overflow-hidden">
         {/* Left Panel */}
         <div 
-          className="flex flex-col overflow-hidden bg-panel-left"
+          className="flex flex-col overflow-hidden bg-panel-left relative"
           style={{ width: `${leftPanelWidth}%` }}
         >
           {/* Passage Navigation */}
