@@ -195,15 +195,6 @@ export default function Index() {
     document.body.style.userSelect = 'none';
   };
 
-  // Get current page range
-  const getCurrentRange = () => {
-    if (!segments) return { start: 1, end: 1 };
-    const key = `p${currentPassage}` as keyof ExamSegments;
-    return {
-      start: segments[key][currentView][0],
-      end: segments[key][currentView][1],
-    };
-  };
 
   // Show setup screen
   if (!examStarted) {
