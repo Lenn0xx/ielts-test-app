@@ -221,7 +221,7 @@ export default function Index() {
     );
   }
 
-  const range = getCurrentRange();
+  // Removed unused range variable - both views rendered simultaneously
 
   return (
     <div className="h-screen flex flex-col overflow-hidden bg-muted">
