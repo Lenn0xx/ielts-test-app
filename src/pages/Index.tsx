@@ -195,15 +195,6 @@ export default function Index() {
     document.body.style.userSelect = 'none';
   };
 
-  // Get current page range
-  const getCurrentRange = () => {
-    if (!segments) return { start: 1, end: 1 };
-    const key = `p${currentPassage}` as keyof ExamSegments;
-    return {
-      start: segments[key][currentView][0],
-      end: segments[key][currentView][1],
-    };
-  };
 
   // Show setup screen
   if (!examStarted) {
@@ -221,7 +212,7 @@ export default function Index() {
     );
   }
 
-  const range = getCurrentRange();
+  // Removed unused range variable - both views rendered simultaneously
 
   return (
     <div className="h-screen flex flex-col overflow-hidden bg-muted">
@@ -229,7 +220,7 @@ export default function Index() {
       <div className="flex-1 flex overflow-hidden">
         {/* Left Panel */}
         <div 
-          className="flex flex-col overflow-hidden bg-panel-left"
+          className="flex flex-col overflow-hidden bg-panel-left relative"
           style={{ width: `${leftPanelWidth}%` }}
         >
           {/* Passage Navigation */}
@@ -263,17 +254,27 @@ export default function Index() {
             </button>
           </div>
 
-          {/* PDF Viewer */}
-          {pdfFile && (
-            <PDFViewer
-              file={pdfFile}
-              startPage={range.start}
-              endPage={range.end}
-              scrollKey={`pdf-p${currentPassage}-${currentView}`}
-              onScrollChange={saveScrollPosition}
-              getScrollPosition={getScrollPosition}
-            />
-          )}
+          {/* PDF Viewers - both mounted, visibility toggled */}
+          {pdfFile && segments && (['material', 'questions'] as ViewType[]).map(view => {
+            const key = `p${currentPassage}` as keyof ExamSegments;
+            const r = segments[key][view];
+            return (
+              <div
+                key={view}
+                className={`flex-1 flex flex-col overflow-hidden ${currentView === view ? '' : 'invisible absolute inset-0 pointer-events-none'}`}
+                style={currentView !== view ? { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 } : undefined}
+              >
+                <PDFViewer
+                  file={pdfFile}
+                  startPage={r[0]}
+                  endPage={r[1]}
+                  scrollKey={`pdf-p${currentPassage}-${view}`}
+                  onScrollChange={saveScrollPosition}
+                  getScrollPosition={getScrollPosition}
+                />
+              </div>
+            );
+          })}
         </div>
 
         {/* Divider */}
