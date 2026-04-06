@@ -44,6 +44,7 @@ export type Database = {
           completed_at: string
           created_at: string
           id: string
+          pdf_name: string | null
           time_taken_seconds: number
           user_id: string
         }
@@ -52,6 +53,7 @@ export type Database = {
           completed_at?: string
           created_at?: string
           id?: string
+          pdf_name?: string | null
           time_taken_seconds: number
           user_id: string
         }
@@ -60,6 +62,7 @@ export type Database = {
           completed_at?: string
           created_at?: string
           id?: string
+          pdf_name?: string | null
           time_taken_seconds?: number
           user_id?: string
         }

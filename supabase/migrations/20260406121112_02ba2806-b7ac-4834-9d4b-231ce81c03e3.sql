@@ -1,0 +1,1 @@
+ALTER TABLE public.exam_results ADD COLUMN pdf_name TEXT;
