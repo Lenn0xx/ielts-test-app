@@ -132,7 +132,8 @@ export default function Index() {
       const { error } = await supabase.from('exam_results').insert({
         user_id: user.id,
         time_taken_seconds: timeTaken,
-        answers: answers
+        answers: answers,
+        pdf_name: pdfFile?.name || null
       });
       
       if (error) {

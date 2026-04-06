@@ -11,6 +11,7 @@ interface ExamResult {
   completed_at: string;
   time_taken_seconds: number;
   answers: any;
+  pdf_name: string | null;
 }
 
 export default function History() {
@@ -110,9 +111,17 @@ export default function History() {
                 >
                   <div className="flex items-start justify-between">
                     <div>
-                      <span className="inline-block px-2 py-0.5 bg-primary/10 text-primary text-xs font-medium rounded mb-2">
-                        {testType}
-                      </span>
+                      <div className="flex items-center gap-2 mb-2 flex-wrap">
+                        <span className="inline-block px-2 py-0.5 bg-primary/10 text-primary text-xs font-medium rounded">
+                          {testType}
+                        </span>
+                        {result.pdf_name && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-muted text-muted-foreground text-xs rounded">
+                            <FileText className="w-3 h-3" />
+                            {result.pdf_name}
+                          </span>
+                        )}
+                      </div>
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <span className="flex items-center gap-1.5">
                           <Calendar className="w-4 h-4" />
