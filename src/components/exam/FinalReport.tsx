@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { QuestionState } from '@/types/exam';
-import { FileText, RotateCcw, CheckCircle, AlertCircle, Home } from 'lucide-react';
+import { FileText, RotateCcw, CheckCircle, AlertCircle, Home, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { DownloadDropdown } from './DownloadDropdown';
 import { downloadReadingListeningTranscript } from '@/lib/transcript-download';
@@ -11,9 +12,18 @@ interface FinalReportProps {
 }
 
 export function FinalReport({ questions, timeSpent, onRestart }: FinalReportProps) {
+  const [markedWrong, setMarkedWrong] = useState<Set<number>>(new Set());
   const answeredCount = questions.slice(1).filter(q => q.answered).length;
   const unansweredCount = 40 - answeredCount;
   
+  const toggleWrong = (num: number) => {
+    setMarkedWrong(prev => {
+      const next = new Set(prev);
+      if (next.has(num)) next.delete(num); else next.add(num);
+      return next;
+    });
+  };
+
   const formatTimeSpent = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -24,6 +34,31 @@ export function FinalReport({ questions, timeSpent, onRestart }: FinalReportProp
     await downloadReadingListeningTranscript(
       { questions },
       { format, testType: 'reading', timeSpent }
+    );
+  };
+
+  const renderQuestion = (num: number) => {
+    const isWrong = markedWrong.has(num);
+    const hasAnswer = !!questions[num]?.value;
+    return (
+      <div
+        key={num}
+        className={`flex items-center py-3 border-b border-border last:border-0 ${isWrong ? 'bg-destructive/10 rounded px-2 -mx-2' : ''}`}
+      >
+        <span className="w-10 font-bold text-primary">{num}.</span>
+        <span className={`flex-1 ${isWrong ? 'text-destructive line-through' : questions[num]?.value ? 'text-foreground' : 'text-muted-foreground italic'}`}>
+          {questions[num]?.value || '(No Answer)'}
+        </span>
+        {hasAnswer && (
+          <button
+            onClick={() => toggleWrong(num)}
+            className={`ml-2 p-1 rounded transition-colors ${isWrong ? 'bg-destructive text-destructive-foreground' : 'hover:bg-destructive/10 text-muted-foreground hover:text-destructive'}`}
+            title={isWrong ? 'Unmark as wrong' : 'Mark as wrong'}
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
+      </div>
     );
   };
 
@@ -51,6 +86,12 @@ export function FinalReport({ questions, timeSpent, onRestart }: FinalReportProp
               <AlertCircle className="w-4 h-4 text-destructive" />
               <span className="text-foreground font-medium">{unansweredCount} Unanswered</span>
             </div>
+            {markedWrong.size > 0 && (
+              <div className="flex items-center gap-2 text-sm">
+                <X className="w-4 h-4 text-destructive" />
+                <span className="text-destructive font-medium">{markedWrong.size} Marked Wrong</span>
+              </div>
+            )}
             <div className="text-sm text-muted-foreground">
               Completed in {formatTimeSpent(timeSpent)}
             </div>
@@ -59,40 +100,17 @@ export function FinalReport({ questions, timeSpent, onRestart }: FinalReportProp
 
         {/* Results Grid */}
         <div className="grid md:grid-cols-2 gap-8 mb-8">
-          {/* Column 1: Questions 1-20 */}
           <div>
             <h3 className="text-sm font-semibold text-muted-foreground mb-4 uppercase tracking-wide">
               Questions 1-20
             </h3>
-            {Array.from({ length: 20 }, (_, i) => i + 1).map(num => (
-              <div
-                key={num}
-                className="flex items-center py-3 border-b border-border last:border-0"
-              >
-                <span className="w-10 font-bold text-primary">{num}.</span>
-                <span className={`flex-1 ${questions[num]?.value ? 'text-foreground' : 'text-muted-foreground italic'}`}>
-                  {questions[num]?.value || '(No Answer)'}
-                </span>
-              </div>
-            ))}
+            {Array.from({ length: 20 }, (_, i) => i + 1).map(renderQuestion)}
           </div>
-
-          {/* Column 2: Questions 21-40 */}
           <div>
             <h3 className="text-sm font-semibold text-muted-foreground mb-4 uppercase tracking-wide">
               Questions 21-40
             </h3>
-            {Array.from({ length: 20 }, (_, i) => i + 21).map(num => (
-              <div
-                key={num}
-                className="flex items-center py-3 border-b border-border last:border-0"
-              >
-                <span className="w-10 font-bold text-primary">{num}.</span>
-                <span className={`flex-1 ${questions[num]?.value ? 'text-foreground' : 'text-muted-foreground italic'}`}>
-                  {questions[num]?.value || '(No Answer)'}
-                </span>
-              </div>
-            ))}
+            {Array.from({ length: 20 }, (_, i) => i + 21).map(renderQuestion)}
           </div>
         </div>
 

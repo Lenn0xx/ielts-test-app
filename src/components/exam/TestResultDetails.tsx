@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown, ChevronUp, FileText, PenTool } from 'lucide-react';
+import { ChevronDown, ChevronUp, PenTool, X } from 'lucide-react';
 import { DownloadDropdown } from './DownloadDropdown';
 import { downloadHistoryTranscript } from '@/lib/transcript-download';
 
@@ -12,6 +12,15 @@ interface TestResultDetailsProps {
 
 export function TestResultDetails({ answers, testType, completedAt, timeSpent }: TestResultDetailsProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [markedWrong, setMarkedWrong] = useState<Set<number>>(new Set());
+
+  const toggleWrong = (idx: number) => {
+    setMarkedWrong(prev => {
+      const next = new Set(prev);
+      if (next.has(idx)) next.delete(idx); else next.add(idx);
+      return next;
+    });
+  };
 
   const handleDownload = async (format: 'txt' | 'pdf' | 'docx') => {
     await downloadHistoryTranscript(answers, testType, completedAt, timeSpent, format);
@@ -68,33 +77,56 @@ export function TestResultDetails({ answers, testType, completedAt, timeSpent }:
   return (
     <div className="mt-4 border-t border-border pt-4">
       <div className="flex items-center justify-between">
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center gap-2 text-sm font-medium text-primary hover:underline"
-        >
-          {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-          {isExpanded ? 'Hide Answers' : `View All ${answeredCount} Answers`}
-        </button>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+          >
+            {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            {isExpanded ? 'Hide Answers' : `View All ${answeredCount} Answers`}
+          </button>
+          {markedWrong.size > 0 && (
+            <span className="text-xs font-medium text-destructive flex items-center gap-1">
+              <X className="w-3 h-3" />
+              {markedWrong.size} wrong
+            </span>
+          )}
+        </div>
         <DownloadDropdown onDownload={handleDownload} variant="secondary" size="sm" />
       </div>
       
       {isExpanded && (
         <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-2">
-          {answersArray.map((item: any, idx: number) => (
-            <div
-              key={idx}
-              className={`flex items-center gap-2 px-3 py-2 rounded text-sm ${
-                item?.answer?.trim() 
-                  ? 'bg-success/10 text-success border border-success/20' 
-                  : 'bg-muted text-muted-foreground'
-              }`}
-            >
-              <span className="font-semibold w-6">Q{idx + 1}</span>
-              <span className="truncate flex-1">
-                {item?.answer?.trim() || '—'}
-              </span>
-            </div>
-          ))}
+          {answersArray.map((item: any, idx: number) => {
+            const hasAnswer = !!item?.answer?.trim();
+            const isWrong = markedWrong.has(idx);
+            return (
+              <div
+                key={idx}
+                className={`flex items-center gap-2 px-3 py-2 rounded text-sm ${
+                  isWrong
+                    ? 'bg-destructive/10 text-destructive border border-destructive/30'
+                    : hasAnswer
+                      ? 'bg-success/10 text-success border border-success/20'
+                      : 'bg-muted text-muted-foreground'
+                }`}
+              >
+                <span className={`font-semibold w-6 ${isWrong ? 'line-through' : ''}`}>Q{idx + 1}</span>
+                <span className={`truncate flex-1 ${isWrong ? 'line-through' : ''}`}>
+                  {item?.answer?.trim() || '—'}
+                </span>
+                {hasAnswer && (
+                  <button
+                    onClick={() => toggleWrong(idx)}
+                    className={`shrink-0 p-0.5 rounded transition-colors ${isWrong ? 'text-destructive' : 'text-muted-foreground/50 hover:text-destructive'}`}
+                    title={isWrong ? 'Unmark' : 'Mark wrong'}
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
