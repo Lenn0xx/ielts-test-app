@@ -82,6 +82,7 @@ export default function Writing() {
           user_id: user.id,
           answers: JSON.parse(JSON.stringify(answers)),
           time_taken_seconds: taken,
+          pdf_name: pdfFile?.name || null,
         }]);
         toast.success('Writing test submitted successfully!');
       } catch (error) {
