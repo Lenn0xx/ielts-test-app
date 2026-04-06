@@ -47,6 +47,7 @@ export type Database = {
           pdf_name: string | null
           time_taken_seconds: number
           user_id: string
+          wrong_answers: Json | null
         }
         Insert: {
           answers?: Json
@@ -56,6 +57,7 @@ export type Database = {
           pdf_name?: string | null
           time_taken_seconds: number
           user_id: string
+          wrong_answers?: Json | null
         }
         Update: {
           answers?: Json
@@ -65,6 +67,7 @@ export type Database = {
           pdf_name?: string | null
           time_taken_seconds?: number
           user_id?: string
+          wrong_answers?: Json | null
         }
         Relationships: []
       }

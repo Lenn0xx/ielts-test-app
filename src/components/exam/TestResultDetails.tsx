@@ -1,23 +1,38 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ChevronDown, ChevronUp, PenTool, X } from 'lucide-react';
 import { DownloadDropdown } from './DownloadDropdown';
 import { downloadHistoryTranscript } from '@/lib/transcript-download';
+import { supabase } from '@/integrations/supabase/client';
 
 interface TestResultDetailsProps {
+  resultId: string;
   answers: any;
   testType: 'Writing' | 'Reading/Listening';
   completedAt: string;
   timeSpent: number;
+  initialWrongAnswers?: number[];
 }
 
-export function TestResultDetails({ answers, testType, completedAt, timeSpent }: TestResultDetailsProps) {
+export function TestResultDetails({ resultId, answers, testType, completedAt, timeSpent, initialWrongAnswers }: TestResultDetailsProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [markedWrong, setMarkedWrong] = useState<Set<number>>(new Set());
+  const [markedWrong, setMarkedWrong] = useState<Set<number>>(new Set(initialWrongAnswers || []));
+
+  useEffect(() => {
+    setMarkedWrong(new Set(initialWrongAnswers || []));
+  }, [initialWrongAnswers]);
+
+  const saveWrongAnswers = useCallback(async (wrongSet: Set<number>) => {
+    await supabase
+      .from('exam_results')
+      .update({ wrong_answers: Array.from(wrongSet) } as any)
+      .eq('id', resultId);
+  }, [resultId]);
 
   const toggleWrong = (idx: number) => {
     setMarkedWrong(prev => {
       const next = new Set(prev);
       if (next.has(idx)) next.delete(idx); else next.add(idx);
+      saveWrongAnswers(next);
       return next;
     });
   };

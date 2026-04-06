@@ -12,6 +12,7 @@ interface ExamResult {
   time_taken_seconds: number;
   answers: any;
   pdf_name: string | null;
+  wrong_answers: number[] | null;
 }
 
 export default function History() {
@@ -32,7 +33,10 @@ export default function History() {
       if (error) {
         console.error('Error fetching results:', error);
       } else {
-        setResults(data || []);
+        setResults((data || []).map((d: any) => ({
+          ...d,
+          wrong_answers: Array.isArray(d.wrong_answers) ? d.wrong_answers : [],
+        })));
       }
       setLoading(false);
     }
@@ -143,10 +147,12 @@ export default function History() {
                     </div>
                   </div>
                   <TestResultDetails 
+                    resultId={result.id}
                     answers={result.answers} 
                     testType={testType} 
                     completedAt={result.completed_at}
                     timeSpent={result.time_taken_seconds}
+                    initialWrongAnswers={result.wrong_answers || []}
                   />
                 </div>
               );
