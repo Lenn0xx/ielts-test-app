@@ -12,6 +12,7 @@ interface ExamResult {
   time_taken_seconds: number;
   answers: any;
   pdf_name: string | null;
+  wrong_answers: number[] | null;
 }
 
 export default function History() {
