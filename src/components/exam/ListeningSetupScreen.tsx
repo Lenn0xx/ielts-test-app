@@ -79,10 +79,10 @@ export function ListeningSetupScreen({ onLaunch }: ListeningSetupScreenProps) {
       return;
     }
     const allFilled = sections.every(s =>
-      s.questionPages.every(v => v !== '') && s.questionRange.every(v => v !== '')
+      s.questionPages.every(v => v !== '')
     );
     if (!allFilled) {
-      alert('Please fill in all page ranges and question ranges.');
+      alert('Please fill in all PDF page ranges.');
       return;
     }
     onLaunch(audioFile, pdfFile, sections as ListeningSection[]);
